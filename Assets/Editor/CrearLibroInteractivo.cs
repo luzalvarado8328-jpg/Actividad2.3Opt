@@ -104,30 +104,31 @@ public class CrearLibroInteractivo
 
         var cam = SetupCamera(new Color(0.88f, 0.92f, 0.96f), true);
         cam.orthographicSize = 5;
+        cam.gameObject.AddComponent<Physics2DRaycaster>();
 
         var canvas = CreateCanvas();
         CreateEventSystem();
 
         // ── Sprite arrastrable ──
-        var spriteObj = new GameObject("SpriteArrastrable");
-        var sr = spriteObj.AddComponent<SpriteRenderer>();
-        sr.sortingOrder = 1;
-        spriteObj.AddComponent<BoxCollider2D>();
-        spriteObj.AddComponent<DragAndDrop>();
-        spriteObj.transform.position = new Vector3(-3.5f, 1.5f, 0f);
-
-        // Configurar sailor.png como Sprite y cargarla
+        // Configurar imagen como Sprite ANTES de crear el objeto
         string sailorPath = "Assets/Sprites/sailor.png";
         string placeholderPath = "Assets/Sprites/Placeholder.png";
-
         SetTextureAsSprite(sailorPath);
         SetTextureAsSprite(placeholderPath);
 
         Sprite spriteImg = AssetDatabase.LoadAssetAtPath<Sprite>(sailorPath);
         if (spriteImg == null)
             spriteImg = AssetDatabase.LoadAssetAtPath<Sprite>(placeholderPath);
+
+        var spriteObj = new GameObject("SpriteArrastrable");
+        var sr = spriteObj.AddComponent<SpriteRenderer>();
+        sr.sortingOrder = 1;
         if (spriteImg != null)
             sr.sprite = spriteImg;
+        // BoxCollider2D DESPUES del sprite para que tome el tamaño correcto
+        spriteObj.AddComponent<BoxCollider2D>();
+        spriteObj.AddComponent<DragAndDrop>();
+        spriteObj.transform.position = new Vector3(-3.5f, 1.5f, 0f);
 
         // Etiqueta para el sprite
         CreateText(canvas.transform, "LblArrastrar",

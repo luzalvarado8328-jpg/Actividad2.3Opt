@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
-public class DragAndDrop : MonoBehaviour
+public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IDragHandler, IPointerUpHandler
 {
-    private bool dragging = false;
     private Vector3 offset;
     private Camera mainCamera;
 
@@ -12,30 +11,20 @@ public class DragAndDrop : MonoBehaviour
         mainCamera = Camera.main;
     }
 
-    void OnMouseDown()
+    public void OnPointerDown(PointerEventData eventData)
     {
-        dragging = true;
-        Vector3 mouseWorldPos = GetMouseWorldPosition();
+        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(eventData.position);
         offset = transform.position - new Vector3(mouseWorldPos.x, mouseWorldPos.y, transform.position.z);
     }
 
-    void OnMouseDrag()
+    public void OnDrag(PointerEventData eventData)
     {
-        if (dragging)
-        {
-            Vector3 mouseWorldPos = GetMouseWorldPosition();
-            transform.position = new Vector3(mouseWorldPos.x + offset.x, mouseWorldPos.y + offset.y, transform.position.z);
-        }
+        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(eventData.position);
+        transform.position = new Vector3(mouseWorldPos.x + offset.x, mouseWorldPos.y + offset.y, transform.position.z);
     }
 
-    void OnMouseUp()
+    public void OnPointerUp(PointerEventData eventData)
     {
-        dragging = false;
-    }
-
-    private Vector3 GetMouseWorldPosition()
-    {
-        Vector2 mousePos = Mouse.current.position.ReadValue();
-        return mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, 0f));
+        // Se suelta el objeto
     }
 }
